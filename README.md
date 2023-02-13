@@ -159,6 +159,6 @@ If you want to run a championship of all players in the directory, where each pl
 
 ---
 
-For questions, email me at ali.abbasi@vanderbilt.edu or visit the office hours on Mondays and Wednesdays from 10:30 to 12:00
+For questions, email me at ali.abbasi@vanderbilt.edu or visit the office hours on Mondays and Wednesdays from 10:30 to 12:00, FGH 373
 
 [1]: /player.py
