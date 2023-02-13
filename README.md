@@ -29,6 +29,7 @@ The `OthelloBoard` class plays matches between two players. It has the `play(p1,
 * If you have your own `Player` class in a file `myplayer.py` in the working directory, you can simply pass `myplayer`.
 * If your player is named something else, then specify the class name like `myplayer/Playa`
 * If the player is in a nested module. For example if you'd need to write `from players.simple import Dumbo`, then specify the player as `players.simple/Dumbo`.
+* SmartRandom class is a random player that in every state, finds all of the valid moves and choose a random action based on that. You can test your agent by playing against SmartRandom. 
 
 ## Testing your player
 
