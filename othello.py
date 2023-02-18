@@ -200,7 +200,7 @@ class OthelloBoard():
     
     
     def check_if_finished(self, board):
-        if (board == 0).sum() == 0:
+        if (board == 0).sum() == 0 or (board == 1).sum()==0 or (board == -1).sum()==0:
             return True 
         
         return False 
