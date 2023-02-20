@@ -313,7 +313,7 @@ class OthelloBoard():
                         if p2_invalid >= self.max_invalid_moves:
                             winner, reason = p1, 'Invalid moves exceeded %d' % self.max_invalid_moves
 
-                if has_move_2 == False:
+                elif has_move_2 == False:
                     if move != None:
                         p2_invalid += 1
                         if p2_invalid >= self.max_invalid_moves:
