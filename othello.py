@@ -276,6 +276,7 @@ class OthelloBoard():
             with time_limit(self.timeout_setup, 'sleep'):
                 move = p1_cls.play(p1_board.copy())
                 has_move = self.check_has_move(p1_board.copy())
+                is_valid = True
                 if move != None:
                     is_valid, p1_board = self.process_move(move, p1_board.copy())
                 
@@ -284,17 +285,20 @@ class OthelloBoard():
                         p1_invalid += 1
                         if p1_invalid >= self.max_invalid_moves:
                             winner, reason = p2, 'Invalid moves exceeded %d' % self.max_invalid_moves
+                            break 
 
                 if has_move == False:
                     if move != None:
                         p1_invalid += 1
                         if p1_invalid >= self.max_invalid_moves:
                             winner, reason = p2, 'Invalid moves exceeded %d' % self.max_invalid_moves
+                            break 
 
                 if  is_valid == False:
                     p1_invalid += 1
                     if p1_invalid >= self.max_invalid_moves:
                         winner, reason = p2, 'Invalid moves exceeded %d' % self.max_invalid_moves
+                        break 
                 else:
                     self._board = p1_board * p1piece
                     moves.append(move)
@@ -310,20 +314,20 @@ class OthelloBoard():
                         break
                     elif (p1_board == 1).sum()  == (p1_board == -1).sum():
                         winner, reason = None, 'Game drawn'
+                        break 
             
             
             if timed_out == True:
                 winner, reason = p2, 'Move timeout'
                 break 
 
-
             p2_board = self._board * p2piece
  
-
             with time_limit(self.timeout_setup, 'sleep'):
                 move = p2_cls.play(p2_board.copy())
                 has_move_2 = self.check_has_move(p2_board.copy())
-                
+                is_valid = True
+            
                 if move != None:
                     is_valid, p2_board = self.process_move(move, p2_board)
                     
@@ -333,16 +337,17 @@ class OthelloBoard():
                         p2_invalid += 1
                         if p2_invalid >= self.max_invalid_moves:
                             winner, reason = p1, 'Invalid moves exceeded %d' % self.max_invalid_moves
+                            break 
 
                 if has_move_2 == False:
                     if move != None:
                         p2_invalid += 1
                         if p2_invalid >= self.max_invalid_moves:
                             winner, reason = p1, 'Invalid moves exceeded %d' % self.max_invalid_moves
+                            break 
 
                 if  is_valid == False:
                     p2_invalid += 1
-                    print(p2_invalid, self.max_invalid_moves, 'invaliddddd')
                     if p2_invalid >= self.max_invalid_moves:
                         winner, reason = p1, 'Invalid moves exceeded %d' % self.max_invalid_moves
                         break 
@@ -362,6 +367,7 @@ class OthelloBoard():
                         break
                     elif (p2_board == 1).sum()  == (p2_board == -1).sum():
                         winner, reason = None, 'Game drawn'
+                        break
         
             
             if timed_out == True:
