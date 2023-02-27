@@ -6,11 +6,13 @@ import os
 from itertools import combinations
 from typing import Dict, Iterable, Tuple
 
+from contextlib import contextmanager
+import threading
+import _thread
+
 import numpy as np
-import signal
 
 from player import Player
-
 
 
 # board is a numpy array
@@ -26,10 +28,31 @@ COLUMNS = 8
 
 TIMEOUT_MOVE = 1
 TIMEOUT_SETUP = 2
-MAX_INVALID_MOVES = 3
+MAX_INVALID_MOVES = 0
+timed_out = False 
 
-def signal_handler(signum, frame):
-    raise Exception("Timed out!")
+
+
+
+class TimeoutException(Exception):
+    def __init__(self, msg=''):
+        self.msg = msg
+
+@contextmanager
+def time_limit(seconds, msg=''):
+    global timed_out
+
+    timer = threading.Timer(seconds, lambda: _thread.interrupt_main())
+    timer.start()
+    
+    try:
+        yield
+    except KeyboardInterrupt:
+        # raise TimeoutException("Timed out for operation {}".format(msg))
+        timed_out = True
+    finally:
+        # if the action ends in specified time, timer is canceled
+        timer.cancel()
 
 
 class OthelloBoard():
@@ -207,6 +230,8 @@ class OthelloBoard():
 
 
     def play(self, player1, player2):
+        global timed_out
+        timed_out = False 
 
         # Randomly swap p1, p2 for first move.
         if self.deterministic:
@@ -224,26 +249,22 @@ class OthelloBoard():
         p1_cls = self.load_players(p1)
         p2_cls = self.load_players(p2)
 
-        signal.signal(signal.SIGALRM, signal_handler)
-        signal.alarm(self.timeout_setup)   
-        try:
+
+        with time_limit(self.timeout_setup, 'sleep'):
             p1_cls.setup()
-        except Exception:
-            winner, reason = p1, 'Setup timeout'
-        finally:
-            if reason: 
-                return winner, reason, moves
-
-
-        signal.signal(signal.SIGALRM, signal_handler)
-        signal.alarm(self.timeout_setup)   
-        try:
-            p2_cls.setup()
-        except Exception:
+        
+            
+        if timed_out == True:
             winner, reason = p2, 'Setup timeout'
-        finally:
-            if reason:
-                return winner, reason, moves
+            return winner, reason, moves
+         
+
+        with time_limit(self.timeout_setup, 'sleep'):
+            p2_cls.setup()
+        
+        if timed_out == True:
+            winner, reason = p1, 'Setup timeout'
+            return winner, reason, moves
         
         
         p1_invalid, p2_invalid = 0, 0
@@ -251,10 +272,9 @@ class OthelloBoard():
 
             p1_board = self._board * p1piece
         
-            signal.signal(signal.SIGALRM, signal_handler)
-            signal.alarm(self.timeout_move)   
-            try:
-                move = p1_cls.play(p1_board)
+
+            with time_limit(self.timeout_setup, 'sleep'):
+                move = p1_cls.play(p1_board.copy())
                 has_move = self.check_has_move(p1_board.copy())
                 if move != None:
                     is_valid, p1_board = self.process_move(move, p1_board.copy())
@@ -271,7 +291,7 @@ class OthelloBoard():
                         if p1_invalid >= self.max_invalid_moves:
                             winner, reason = p2, 'Invalid moves exceeded %d' % self.max_invalid_moves
 
-                elif  is_valid == False:
+                if  is_valid == False:
                     p1_invalid += 1
                     if p1_invalid >= self.max_invalid_moves:
                         winner, reason = p2, 'Invalid moves exceeded %d' % self.max_invalid_moves
@@ -290,22 +310,23 @@ class OthelloBoard():
                         break
                     elif (p1_board == 1).sum()  == (p1_board == -1).sum():
                         winner, reason = None, 'Game drawn'
-            except Exception:
+            
+            
+            if timed_out == True:
                 winner, reason = p2, 'Move timeout'
-            finally:
-                if reason: break
+                break 
 
 
             p2_board = self._board * p2piece
+ 
 
-            signal.signal(signal.SIGALRM, signal_handler)
-            signal.alarm(self.timeout_move)   
-            try:
-                move = p2_cls.play(p2_board)
+            with time_limit(self.timeout_setup, 'sleep'):
+                move = p2_cls.play(p2_board.copy())
                 has_move_2 = self.check_has_move(p2_board.copy())
-
+                
                 if move != None:
                     is_valid, p2_board = self.process_move(move, p2_board)
+                    
 
                 if has_move_2 == True:
                     if move == None:
@@ -319,19 +340,22 @@ class OthelloBoard():
                         if p2_invalid >= self.max_invalid_moves:
                             winner, reason = p1, 'Invalid moves exceeded %d' % self.max_invalid_moves
 
-                elif  is_valid == False:
+                if  is_valid == False:
                     p2_invalid += 1
+                    print(p2_invalid, self.max_invalid_moves, 'invaliddddd')
                     if p2_invalid >= self.max_invalid_moves:
                         winner, reason = p1, 'Invalid moves exceeded %d' % self.max_invalid_moves
+                        break 
                 else:
                     self._board = p2_board * p2piece
                     moves.append(move)
-                    # print(self._board, move, 'p2')
+                    # print(self._board, move, 'p2', 'dfdfdf')
                     # print()
 
                 if self.check_if_finished(p2_board) or (has_move == False and has_move_2 == False):
                     if (p2_board == 1).sum() > (p2_board == -1).sum():
                         winner, reason = p2, 'Majority'
+                        # print('dfdfdfdfdf', has_move, has_move_2, p2_board)
                         break
                     elif (p2_board == 1).sum() < (p2_board == -1).sum():
                         winner, reason = p1, 'Majority'
@@ -339,10 +363,10 @@ class OthelloBoard():
                     elif (p2_board == 1).sum()  == (p2_board == -1).sum():
                         winner, reason = None, 'Game drawn'
         
-            except Exception:
+            
+            if timed_out == True:
                 winner, reason = p1, 'Move timeout'
-            finally:
-                if reason: break
+                break 
         
         return winner, reason, moves
 
