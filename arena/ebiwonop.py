@@ -106,11 +106,6 @@ class Player():
 
         return moved, board
 
-    def alphabeta(self, move, board, alpha, beta,ply):
-        r,c = move
-        if
-        return moved, board
-
 
     def play(self, board: np.ndarray):
         moves = self.valid_moves(board)
@@ -123,3 +118,27 @@ class Player():
          # print(moves[a])
 
         return moves[a]
+    
+    # def alphabeta(self,board, depth,alpha, beta, maximizePlayer):
+    #     moves = self.valid_moves(board)
+    #     if depth == 0 or len(moves) == 0:
+    #         return board
+        
+    #     if maximizePlayer:
+    #         maxEval = float("-inf")
+    #         for possible_move in range(0, len(moves)):
+    #             eval = self.alphabeta(possible_move, depth - 1, alpha, beta,  False)
+    #             maxEval = max(maxEval,eval)
+    #             alpha = max(alpha,eval)
+    #             if beta <= alpha:
+    #                 break
+    #         return maxEval
+    #     else:
+    #         minEval = float("inf")
+    #         for possible_move in range(0, len(moves)):
+    #             eval = self.alphabeta(possible_move, depth + 1, alpha, beta,  True)
+    #             minEval = min(minEval, eval)
+    #             beta = min(beta, eval)
+    #         return minEval
+            
+
