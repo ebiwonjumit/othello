@@ -155,13 +155,13 @@ class SmartRandom(P):
 
     def play(self, board: np.ndarray):
         moves = self.valid_moves(board)
-        # print(moves)
+        print(moves)
         if len(moves) == 0:
             return None 
         else:
             a = np.random.randint(0, len(moves) )
 
-        # print(moves[a])
+        print(moves[a])
 
         return moves[a]
 
