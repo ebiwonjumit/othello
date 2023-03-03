@@ -4,6 +4,8 @@ from player import Player as P
 
 rows, cols = 8, 8
 
+TIMEOUT_MOVE = 1
+
 
 class Player():
 
@@ -43,6 +45,7 @@ class Player():
 
     def process_move(self, move, board):
         r, c = move
+        chosen_move = []
         if board[r, c] != 0:
             return False, board 
 
@@ -102,6 +105,7 @@ class Player():
 
         board = np.fliplr(board)
         if moved == True:
+            chosen_move.append((r,c))
             board[r, c] = 1
 
         return moved, board
@@ -114,31 +118,46 @@ class Player():
             return None 
         else:
             a = np.random.randint(0, len(moves) )
+            b = self.alphabeta(board, 1, float("-inf"), float("inf"), True)
 
-         # print(moves[a])
+        print('------------ ALPHAOTHELLO -----------')    
+        print(moves[a])
 
         return moves[a]
     
-    # def alphabeta(self,board, depth,alpha, beta, maximizePlayer):
-    #     moves = self.valid_moves(board)
-    #     if depth == 0 or len(moves) == 0:
-    #         return board
+    def alphabeta(self, board, depth, alpha, beta, maximizePlayer):
+        moves = self.valid_moves(board)
+        if depth == 0 or len(moves) == 0:
+            return moves
         
-    #     if maximizePlayer:
-    #         maxEval = float("-inf")
-    #         for possible_move in range(0, len(moves)):
-    #             eval = self.alphabeta(possible_move, depth - 1, alpha, beta,  False)
-    #             maxEval = max(maxEval,eval)
-    #             alpha = max(alpha,eval)
-    #             if beta <= alpha:
-    #                 break
-    #         return maxEval
-    #     else:
-    #         minEval = float("inf")
-    #         for possible_move in range(0, len(moves)):
-    #             eval = self.alphabeta(possible_move, depth + 1, alpha, beta,  True)
-    #             minEval = min(minEval, eval)
-    #             beta = min(beta, eval)
-    #         return minEval
+        if maximizePlayer:
+            maxEval = float("-inf")
+            for possible_move in range(0, len(moves)):
+                is_valid, current_board = self.process_move(possible_move, board)
+                eval = self.alphabeta(current_board, depth - 1, alpha, beta, False)
+                print("I AM TRYING TO PRINT MY RESULTS")
+                print(eval)
+                maxEval = max(maxEval,eval)
+                alpha = max(alpha,eval)
+                if beta <= alpha:
+                    break
+            return maxEval
+        else:
+            minEval = float("inf")
+            for possible_move in range(0, len(moves)):
+                is_valid, current_board = self.process_move(possible_move, board)
+                eval = self.alphabeta(current_board, depth + 1, alpha, beta, True)
+                minEval = min(minEval, eval)
+                beta = min(beta, eval)
+            return minEval
+        
+    def check_score(self, board):
+        player, opponent = 0,0
+        for r_cnt in range(self.rows):
+            for c_cnt in range(self.columns):
+                val = board[r_cnt,c_cnt]
+                if val == 1: player += 1
+                elif val == -1: opponent += 1
+        return player - opponent
             
 

@@ -117,7 +117,7 @@ class Player():
             return None 
         else:
             a = np.random.randint(0, len(moves) )
-
+            
         print('------------ Dummy 3 -----------')    
         print(moves[a])
 
