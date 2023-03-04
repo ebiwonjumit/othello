@@ -11,8 +11,8 @@ class Player():
     def setup(self):
         self.rows = rows
         self.columns = cols
-        print('Smartttttt RRNDDDD')
-        print(self.__class__.__name__ + ': The default imported class name. Pretty smart random2.')
+        # print('Smartttttt RRNDDDD')
+        # print(self.__class__.__name__ + ': The default imported class name. Pretty smart random2.')
 
 
     def valid_moves(self, board):
@@ -117,7 +117,8 @@ class Player():
             return None 
         else:
             a = np.random.randint(0, len(moves) )
-
-        # print(moves[a])
+            
+        print('------------ Dummy 3 -----------')    
+        print(moves[a])
 
         return moves[a]
