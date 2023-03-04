@@ -118,39 +118,77 @@ class Player():
             return None 
         else:
             a = np.random.randint(0, len(moves) )
-            b = self.alphabeta(board, 1, float("-inf"), float("inf"), True)
+            b = self.minimaxer(board)
 
         print('------------ ALPHAOTHELLO -----------')    
         print(moves[a])
 
         return moves[a]
     
-    def alphabeta(self, board, depth, alpha, beta, maximizePlayer):
+    # def alphabeta(self, board, depth, alpha, beta, maximizePlayer):
+    #     moves = self.valid_moves(board)
+    #     if depth == 0 or len(moves) == 0:
+            
+    #         return moves[0]
+        
+    #     if maximizePlayer: 
+    #         maxEval = float("-inf")
+    #         for m in range(0, len(moves)): 
+    #             is_valid, my_board = self.process_move(moves[m], board)
+    #             print("WE GOT TO THE FIFTH LINE")
+    #             eval = self.alphabeta(self, my_board, depth - 1, alpha, beta, False)
+    #             print("I AM TRYING TO PRINT MY RESULTS")
+    #             print(eval)
+    #             maxEval = max(maxEval,eval)
+    #             alpha = max(alpha,eval)
+    #             if beta <= alpha:
+    #                 break
+    #         return maxEval
+    #     else:
+    #         minEval = float("inf")
+    #         for m in range(0, len(moves)):
+    #             is_valid, current_board = self.process_move(moves[m], board)
+    #             opponent_board = np.multiply(current_board, -1)
+    #             eval = self.alphabeta(opponent_board, depth + 1, alpha, beta, True)
+    #             minEval = min(minEval, eval)
+    #             beta = min(beta, eval)
+    #         return minEval
+        
+    def minimax_max(self, board):
         moves = self.valid_moves(board)
-        if depth == 0 or len(moves) == 0:
-            return moves
+        if len(moves) == 0:
+            return self.check_score(board)
         
-        if maximizePlayer:
-            maxEval = float("-inf")
-            for possible_move in range(0, len(moves)):
-                is_valid, current_board = self.process_move(possible_move, board)
-                eval = self.alphabeta(current_board, depth - 1, alpha, beta, False)
-                print("I AM TRYING TO PRINT MY RESULTS")
-                print(eval)
-                maxEval = max(maxEval,eval)
-                alpha = max(alpha,eval)
-                if beta <= alpha:
-                    break
-            return maxEval
-        else:
-            minEval = float("inf")
-            for possible_move in range(0, len(moves)):
-                is_valid, current_board = self.process_move(possible_move, board)
-                eval = self.alphabeta(current_board, depth + 1, alpha, beta, True)
-                minEval = min(minEval, eval)
-                beta = min(beta, eval)
-            return minEval
+        value = float("-inf")
+        for i in range(0, len(moves)):
+            is_valid, current_board = self.process_move(moves[i],board)
+            value = max(value, self.minimax_min(current_board))
         
+        return value
+    
+    def minimax_min(self,board):
+        opponent_board = np.multiply(board, -1)
+        moves = self.valid_moves(opponent_board)
+        if len(moves) == 0:
+            return self.check_score(opponent_board)
+        
+        value = float("inf")
+        for i in range(0, len(moves)):
+            is_valid, current_board = self.process_move(moves[i],opponent_board )
+            value = min(value, self.minimax_max(current_board))
+        
+        return value
+    
+    def minimaxer(self, board):
+        moves = self.valid_moves(board)
+        move_picked = []
+        indexes = []
+
+        for i in range(0, len(moves)):
+            is_valid, current_board = self.process_move(moves[i], board)
+            indexes.append(self.minimax_max(current_board))
+        return moves[indexes.index(max(indexes))]
+
     def check_score(self, board):
         player, opponent = 0,0
         for r_cnt in range(self.rows):
