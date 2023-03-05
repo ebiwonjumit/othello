@@ -113,10 +113,11 @@ class Player():
 
         # print(moves)
         if len(moves) == 0:
-            return best_move 
+            return None
         else:
             a = np.random.randint(0, len(moves) )
-            b = self.get_best_move(board, 3)
+            #Calling Alpha beta with depth
+            b = self.get_best_move(board, 1)
 
         print('------------ RANDO -----------')    
         print(moves[a])
@@ -135,9 +136,12 @@ class Player():
                 is_valid, potential_board = self.process_move(moves[m], board.copy())
                 if is_valid == True:
                     score = self.alphabeta(potential_board, depth, float("-inf"), float("inf"), True)
+                    print("HERE IS A SCORE FRIEND")
+                    print(score)
                     if score > best_score:
                         best_score = score
                         best_move = moves[m]
+        print(best_move)
         return best_move
     
     def alphabeta(self, board, depth, alpha, beta, maximizePlayer):
@@ -156,18 +160,25 @@ class Player():
                     maxEval = max(maxEval,eval)
                     alpha = max(alpha,eval)
                     if beta <= alpha:
+                        # print("IVE CUT")
                         break
+            print("HERE IS THE EVAL")
+            print(maxEval)
             return maxEval
         else:
             minEval = float("inf")
-            # print("I AM TRYING TO PRINT MY RESULTS")
             for m in range(0, len(moves)):
                 is_valid, current_board = self.process_move(moves[m], board.copy())
+                # print("I AM TRYING TO PRINT MY RESULTS")
                 if is_valid == True:
                     opponent_board = np.multiply(current_board, -1)
                     eval = self.alphabeta(opponent_board, (depth + 1), alpha, beta, True)
                     minEval = min(minEval, eval)
                     beta = min(beta, eval)
+                    if beta <= alpha:
+                        break
+            print("HERE IS THE minEVAL")
+            print(minEval)
             return minEval
         
 
