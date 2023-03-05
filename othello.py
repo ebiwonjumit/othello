@@ -24,8 +24,8 @@ from player import Player
 ROWS = 8
 COLUMNS = 8
 
-TIMEOUT_MOVE = 3
-TIMEOUT_SETUP = 2
+TIMEOUT_MOVE = 30
+TIMEOUT_SETUP = 10
 MAX_INVALID_MOVES = 3
 
 def signal_handler(signum, frame):
