@@ -125,6 +125,8 @@ class Player():
 
         return b
     
+
+# Helper function for running Alpha Beta
     def get_best_move(self, board, depth):
         moves = self.valid_moves(board)
         best_move = None
@@ -168,41 +170,10 @@ class Player():
                     beta = min(beta, eval)
             return minEval
         
-    # def minimax_max(self, board):
-        # moves = self.valid_moves(board)
-        # if len(moves) == 0:
-        #     return self.check_score(board)
-        
-        # value = float("-inf")
-        # for i in range(0, len(moves)):
-        #     is_valid, current_board = self.process_move(moves[i],board)
-        #     value = max(value, self.minimax_min(current_board))
-        
-        # return value
-    
-    # def minimax_min(self,board):
-        opponent_board = np.multiply(board, -1)
-        moves = self.valid_moves(opponent_board)
-        if len(moves) == 0:
-            return self.check_score(opponent_board)
-        
-        value = float("inf")
-        for i in range(0, len(moves)):
-            is_valid, current_board = self.process_move(moves[i],opponent_board )
-            value = min(value, self.minimax_max(current_board))
-        
-        return value
-    
-    # def minimaxer(self, board):
-        moves = self.valid_moves(board)
-        move_picked = []
-        indexes = []
 
-        for i in range(0, len(moves)):
-            is_valid, current_board = self.process_move(moves[i], board)
-            indexes.append(self.minimax_max(current_board))
-        return moves[indexes.index(max(indexes))]
 
+# Heuristic eval function
+# Subtract opponent pieces from player pieces    
     def check_score(self, board):
         score = 0
         for r_cnt in range(self.rows):
