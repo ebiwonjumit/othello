@@ -153,14 +153,11 @@ class Player():
             maxEval = float("-inf")
             for m in range(0, len(moves)): 
                 is_valid, current_board = self.process_move(moves[m], board.copy())
-                # print("HERE IS MY BOARD")
-                # print(current_board)
                 if is_valid == True:
                     eval = self.alphabeta(current_board, (depth - 1), alpha, beta, False)
                     maxEval = max(maxEval,eval)
                     alpha = max(alpha,eval)
                     if beta <= alpha:
-                        # print("IVE CUT")
                         break
             print("HERE IS THE EVAL")
             print(maxEval)
