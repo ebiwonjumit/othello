@@ -117,7 +117,7 @@ class Player():
         else:
             a = np.random.randint(0, len(moves) )
             #Calling Alpha beta with depth
-            b = self.get_best_move(board, 2)
+            b = self.get_best_move(board, 3)
 
         print('------------ RANDO -----------')    
         print(moves[a])
