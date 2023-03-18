@@ -8,84 +8,84 @@ rows, cols = 8, 8
 
 TIMEOUT_MOVE = 1
 
-# class MonteCarloTreeSearchNode():
-#     def __init__(self, board, parent=None, parent_move=None):
-#         self.board = board
-#         self.parent = parent
-#         self.parent_move = parent_move
-#         self.children = []
-#         self._number_of_visits = 0
-#         self._results = defaultdict(int)
-#         self._results[1] = 0
-#         self._results[-1] = 0
-#         self._untried_moves = None
-#         self._untried_moves = self.untried_moves()
-#         self.rows = 8
-#         self.columns = 8
-#         return
+class MonteCarloTreeSearchNode():
+    def __init__(self, board, parent=None, parent_move=None):
+        self.board = board
+        self.parent = parent
+        self.parent_move = parent_move
+        self.children = []
+        self._number_of_visits = 0
+        self._results = defaultdict(int)
+        self._results[1] = 0
+        self._results[-1] = 0
+        self._untried_moves = None
+        self._untried_moves = self.untried_moves()
+        self.rows = 8
+        self.columns = 8
+        return
     
-#     def untried_moves(self, board):
-#         self._untried_moves = self.valid_moves(board)
-#         return self._untried_moves
+    def untried_moves(self, board):
+        self._untried_moves = self.valid_moves(board)
+        return self._untried_moves
     
-#     def q(self):
-#         wins = self._results[1]
-#         loses = self._results[-1]
-#         return wins - loses
+    def q(self):
+        wins = self._results[1]
+        loses = self._results[-1]
+        return wins - loses
     
-#     def n_visits(self):
-#         return self._number_of_visits
+    def n_visits(self):
+        return self._number_of_visits
     
-#     def expand(self, board):
-#      current_move = self._untried_moves.pop()
-#      is_valid, next_move = self.process_move(current_move, board.copy())
-#      child_node = MonteCarloTreeSearchNode(next_move, parent=self, parent_move=current_move)
-#      self.children.append(child_node)
-#      return child_node 
+    def expand(self, board):
+     current_move = self._untried_moves.pop()
+     is_valid, next_move = self.process_move(current_move, board.copy())
+     child_node = MonteCarloTreeSearchNode(next_move, parent=self, parent_move=current_move)
+     self.children.append(child_node)
+     return child_node 
 
-#     def is_terminal_node(self, board):
-#         return self.is_game_over(board)
+    def is_terminal_node(self, board):
+        return self.is_game_over(board)
     
-#     def rollout(self, board):
-#         current_rollout_board = board.copy()
-#         while not self.is_game_over(current_rollout_board):
-#             possible_moves = self.valid_moves(current_rollout_board)
-#             action = self.rollout_policy(possible_moves)
-#             is_valid, current_rollout_board_end = self.process_move(action, current_rollout_board)
-#         return self.get_final_score(current_rollout_board_end)
+    def rollout(self, board):
+        current_rollout_board = board.copy()
+        while not self.is_game_over(current_rollout_board):
+            possible_moves = self.valid_moves(current_rollout_board)
+            action = self.rollout_policy(possible_moves)
+            is_valid, current_rollout_board_end = self.process_move(action, current_rollout_board)
+        return self.get_final_score(current_rollout_board_end)
     
-#     def backpropagate(self, result):
-#         self._number_of_visits += 1.
-#         self._results[result] += 1.
-#         if self.parent:
-#             self.parent.backpropagate(result)
+    def backpropagate(self, result):
+        self._number_of_visits += 1.
+        self._results[result] += 1.
+        if self.parent:
+            self.parent.backpropagate(result)
     
-#     def is_fully_expanded(self):
-#         return len(self._untried_moves) == 0
+    def is_fully_expanded(self):
+        return len(self._untried_moves) == 0
     
-#     def best_child(self, c_param=0.1):
-#         choices_weights = [(c.q() / c.n()) + c_param * np.sqrt((2 * np.log(self.n_visits()) / c.n())) for c in self.children]
-#         return self.children[np.argmax(choices_weights)]
+    def best_child(self, c_param=0.1):
+        choices_weights = [(c.q() / c.n()) + c_param * np.sqrt((2 * np.log(self.n_visits()) / c.n())) for c in self.children]
+        return self.children[np.argmax(choices_weights)]
 
-#     def rollout_policy(self, possible_moves):
-#         return possible_moves[np.random.randint(len(possible_moves))]
+    def rollout_policy(self, possible_moves):
+        return possible_moves[np.random.randint(len(possible_moves))]
 
-#     def _tree_policy(self):
-#         current_node = self
-#         while not current_node.is_terminal_node():
-#             if not current_node.is_fully_expanded():
-#                 return current_node.expand()
-#             else:
-#                 current_node = current_node.best_child()
-#         return current_node
+    def _tree_policy(self):
+        current_node = self
+        while not current_node.is_terminal_node():
+            if not current_node.is_fully_expanded():
+                return current_node.expand()
+            else:
+                current_node = current_node.best_child()
+        return current_node
     
-#     def best_action(self):
-#         simulation_no = 100
-#         for i in range(simulation_no):
-#             v = self._tree_policy()
-#             reward = v.rollout()
-#             v.backpropagate(reward)
-#         return self.best_child(c_param=0.)
+    def best_action(self):
+        simulation_no = 100
+        for i in range(simulation_no):
+            v = self._tree_policy()
+            reward = v.rollout()
+            v.backpropagate(reward)
+        return self.best_child(c_param=0.)
     
 
 #     def valid_moves(self, board):
@@ -316,6 +316,8 @@ class Player():
             return None
         else:
             a = np.random.randint(0, len(moves) )
+            root = MonteCarloTreeSearchNode(board)
+            selected_node = root.best_action
             b = self.monte_carlo(board)
 
         print('------------ RANDO -----------')    
