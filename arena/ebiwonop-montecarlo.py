@@ -1,11 +1,11 @@
 
 import numpy as np
+import time
 from player import Player as P
 
 rows, cols = 8, 8
 
-TIMEOUT_MOVE = 2
-
+TIMEOUT_MOVE = 1
 
 class Player():
 
@@ -116,74 +116,23 @@ class Player():
             return None
         else:
             a = np.random.randint(0, len(moves) )
-            #Calling Alpha beta with depth
-            b = self.get_best_move(board, 2)
+            b = self.monte_carlo(board)
 
         print('------------ RANDO -----------')    
         print(moves[a])
-        print("------ALPHAB MOVE")
+        print('------------ MONTE CARLO  -----------')    
         print(b)
 
-        return b
+        return moves[a]
     
 
-# Helper function for running Alpha Beta
-    def get_best_move(self, board, depth):
-        moves = self.valid_moves(board)
+    # Main Monte Carlo Function
+    def monte_carlo(self, board):
+        current_state = self.valid_moves(board) 
         best_move = None
-        best_score = float("-inf")
-        for m in range(0, len(moves)):
-                is_valid, potential_board = self.process_move(moves[m], board.copy())
-                if is_valid == True:
-                    score = self.alphabeta(potential_board, depth, float("-inf"), float("inf"), True)
-                    # print("HERE IS A SCORE FRIEND")
-                    # print(score)
-                    if score > best_score:
-                        best_score = score
-                        best_move = moves[m]
-        # print(best_move)
+        best_score = float("-inf") 
         return best_move
-    
-    def alphabeta(self, board, depth, alpha, beta, maximizePlayer):
-        moves = self.valid_moves(board)
-        if depth == 0 or self.is_game_over(board.copy()):
-            return self.check_score(board)
-        
-        if maximizePlayer: 
-            maxEval = float("-inf")
-            for m in range(0, len(moves)): 
-                is_valid, current_board = self.process_move(moves[m], board.copy())
-                if is_valid == True:
-                    eval = self.alphabeta(current_board, (depth - 1), alpha, beta, False)
-                    maxEval = max(maxEval,eval)
-                    alpha = max(alpha,eval)
-                    if beta <= alpha:
-                        break
-            # print("HERE IS THE EVAL")
-            # print(maxEval)
-            return maxEval
-        else:
-            minEval = float("inf")
-            for m in range(0, len(moves)):
-                is_valid, current_board = self.process_move(moves[m], board.copy())
-                # print("I AM TRYING TO PRINT MY RESULTS")
-                if is_valid == True:
-                    opponent_board = np.multiply(current_board, -1)
-                    eval = self.alphabeta(opponent_board, (depth - 1), alpha, beta, True)
-                    minEval = min(minEval, eval)
-                    beta = min(beta, eval)
-                    if beta <= alpha:
-                        break
-            # print("HERE IS THE minEVAL")
-            # print(minEval)
-            return minEval
 
-# Check if there are moves left
-    def is_game_over(self, board):
-        moves = self.valid_moves(board)
-        if len(moves) == 0:
-            return True
-        return False        
 
 
 # Heuristic eval function
@@ -197,4 +146,3 @@ class Player():
                 elif val == -1: score -= 1
         return score
             
-
