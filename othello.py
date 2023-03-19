@@ -24,7 +24,7 @@ from player import Player
 ROWS = 8
 COLUMNS = 8
 
-TIMEOUT_MOVE = 2
+TIMEOUT_MOVE = 3
 TIMEOUT_SETUP = 2
 MAX_INVALID_MOVES = 3
 

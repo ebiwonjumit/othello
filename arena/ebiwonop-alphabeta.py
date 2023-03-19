@@ -4,7 +4,7 @@ from player import Player as P
 
 rows, cols = 8, 8
 
-TIMEOUT_MOVE = 2
+TIMEOUT_MOVE = 3
 
 
 class Player():
@@ -117,7 +117,7 @@ class Player():
         else:
             a = np.random.randint(0, len(moves) )
             #Calling Alpha beta with depth
-            b = self.get_best_move(board, 3)
+            b = self.get_best_move(board, 2)
 
         print('------------ RANDO -----------')    
         print(moves[a])
@@ -146,7 +146,7 @@ class Player():
     
     def alphabeta(self, board, depth, alpha, beta, maximizePlayer):
         moves = self.valid_moves(board)
-        if depth == 0 or self.is_game_over(board.copy()):
+        if depth == 0 or self.is_game_over(board):
             return self.check_score(board)
         
         if maximizePlayer: 
