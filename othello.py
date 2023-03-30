@@ -256,7 +256,10 @@ class OthelloBoard():
 
 
         with time_limit(self.total_time_limit, 'sleep'):
+            t0 = time.time()
             p1_cls.setup()
+            t1 = time.time()
+            self.time_p1 += t1-t0
         
             
         if timed_out == True:
@@ -265,7 +268,10 @@ class OthelloBoard():
          
 
         with time_limit(self.total_time_limit, 'sleep'):
+            t0 = time.time()
             p2_cls.setup()
+            t1 = time.time()
+            self.time_p2 += t1-t0
         
         if timed_out == True:
             winner, reason = p1, 'Setup timeout'
