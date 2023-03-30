@@ -5,7 +5,7 @@ import sys
 import os
 from itertools import combinations
 from typing import Dict, Iterable, Tuple
-
+import time 
 from contextlib import contextmanager
 import threading
 import _thread
@@ -77,7 +77,10 @@ class OthelloBoard():
         self.timeout_setup = timeout_setup
         self.max_invalid_moves = max_invalid_moves
         self.deterministic = deterministic
+        self.total_time_limit = 45.0 # 45 seconds
         self.suppress = suppress
+        self.time_p1 = 0
+        self.time_p2 = 0
 
         self.reset_board()
 
@@ -122,6 +125,8 @@ class OthelloBoard():
 
         self._board[self.rows//2, self.columns//2-1] = 1
         self._board[self.rows//2, self.columns//2] = -1
+        self.time_p1 = 0
+        self.time_p2 = 0
 
     def check_has_move(self, board):
         for r_cnt in range(self.rows):
@@ -250,7 +255,7 @@ class OthelloBoard():
         p2_cls = self.load_players(p2)
 
 
-        with time_limit(self.timeout_setup, 'sleep'):
+        with time_limit(self.total_time_limit, 'sleep'):
             p1_cls.setup()
         
             
@@ -259,7 +264,7 @@ class OthelloBoard():
             return winner, reason, moves
          
 
-        with time_limit(self.timeout_setup, 'sleep'):
+        with time_limit(self.total_time_limit, 'sleep'):
             p2_cls.setup()
         
         if timed_out == True:
@@ -273,8 +278,18 @@ class OthelloBoard():
             p1_board = self._board * p1piece
         
 
-            with time_limit(self.timeout_setup, 'sleep'):
+            with time_limit(self.total_time_limit-self.time_p1, 'sleep'):
+                t0 = time.time()
                 move = p1_cls.play(p1_board.copy())
+                t1 = time.time()
+                self.time_p1 += t1-t0
+
+                if self.time_p1 > self.total_time_limit:
+                    timed_out = True
+                    winner, reason = p2, 'Total Time limit exceeded'
+                    break
+
+
                 has_move = self.check_has_move(p1_board.copy())
                 is_valid = True
                 if move != None:
@@ -323,8 +338,17 @@ class OthelloBoard():
 
             p2_board = self._board * p2piece
  
-            with time_limit(self.timeout_setup, 'sleep'):
+            with time_limit(self.total_time_limit-self.time_p2, 'sleep'):
+                t0 = time.time()
                 move = p2_cls.play(p2_board.copy())
+                t1 = time.time()
+                self.time_p2 += t1-t0
+
+                if self.time_p2 > self.total_time_limit:
+                    timed_out = True
+                    winner, reason = p1, 'Total Time limit exceeded'
+                    break
+
                 has_move_2 = self.check_has_move(p2_board.copy())
                 is_valid = True
             
