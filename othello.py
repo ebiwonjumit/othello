@@ -26,7 +26,7 @@ from player import Player
 ROWS = 8
 COLUMNS = 8
 
-TIMEOUT_MOVE = 3
+TIMEOUT_MOVE = 1
 TIMEOUT_SETUP = 2
 MAX_INVALID_MOVES = 0
 timed_out = False 
@@ -277,9 +277,7 @@ class OthelloBoard():
             winner, reason = p1, 'Setup timeout'
             return winner, reason, moves
         
-        print('------------ LET\'s BEGIN -----------')
-        print(self._board,'START GAME')
-        print()
+        
         p1_invalid, p2_invalid = 0, 0
         while True:
 
@@ -325,8 +323,8 @@ class OthelloBoard():
                 else:
                     self._board = p1_board * p1piece
                     moves.append(move)
-                    print(self._board, 'p1')
-                    print()
+                    # print(self._board, move, 'p1')
+                    # print()
 
                 if self.check_if_finished(p1_board):
                     if (p1_board == 1).sum() > (p1_board == -1).sum():
@@ -386,8 +384,8 @@ class OthelloBoard():
                 else:
                     self._board = p2_board * p2piece
                     moves.append(move)
-                    print(self._board, 'p2', 'dfdfdf')
-                    print()
+                    # print(self._board, move, 'p2', 'dfdfdf')
+                    # print()
 
                 if self.check_if_finished(p2_board) or (has_move == False and has_move_2 == False):
                     if (p2_board == 1).sum() > (p2_board == -1).sum():

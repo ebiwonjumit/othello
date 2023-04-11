@@ -4,7 +4,7 @@ from player import Player as P
 
 rows, cols = 8, 8
 
-TIMEOUT_MOVE = 3
+TIMEOUT_MOVE = 5
 
 
 class Player():
