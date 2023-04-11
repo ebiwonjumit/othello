@@ -4,7 +4,7 @@ from player import Player as P
 
 rows, cols = 8, 8
 
-TIMEOUT_MOVE = 5
+TIMEOUT_MOVE = 6
 
 
 class Player():
@@ -12,6 +12,16 @@ class Player():
     def setup(self):
         self.rows = rows
         self.columns = cols
+        self.weights = np.array(
+            [[4, -3, 2, 2, 2, 2, -3, 4],
+            [-3, -4, -1, -1, -1, -1, -4, -3],
+            [2, -1, 1, 0, 0, 1, -1, 2],
+            [2, -1, 0, 1, 1, 0, -1, 2],
+            [2, -1, 0, 1, 1, 0, -1, 2],
+            [2, -1, 1, 0, 0, 1, -1, 2],
+            [-3, -4, -1, -1, -1, -1, -4, -3],
+            [4, -3, 2, 2, 2, 2, -3, 4]]
+        )
 
 
     def valid_moves(self, board):
@@ -115,13 +125,13 @@ class Player():
         if len(moves) == 0:
             return None
         else:
-            a = np.random.randint(0, len(moves) )
+            # a = np.random.randint(0, len(moves) )
             #Calling Alpha beta with depth
             b = self.get_best_move(board, 2)
 
-        print('------------ RANDO -----------')    
-        print(moves[a])
-        print("------ALPHAB MOVE")
+        # print('------------ RANDO -----------')    
+        # print(moves[a])
+        print("------ EBIWONOP MOVE -----------")
         print(b)
 
         return b
@@ -188,7 +198,7 @@ class Player():
 
 # Heuristic eval function
 # Subtract opponent pieces from player pieces    
-    def check_score(self, board):
+    def check_score_old(self, board):
         score = 0
         for r_cnt in range(self.rows):
             for c_cnt in range(self.columns):
@@ -198,3 +208,8 @@ class Player():
         return score
             
 
+# Heuristic eval function
+# Subtract opponent pieces from player pieces    
+    def check_score(self, board):
+     return np.sum(np.multiply(board,self.weights))
+            

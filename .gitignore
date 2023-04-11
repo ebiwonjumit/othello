@@ -2848,3 +2848,5 @@ __pycache__/player.cpython-311.pyc
 .DS_Store
 *.pyc
 *.pyc
+*.pyc
+__pycache__/player.cpython-311.pyc

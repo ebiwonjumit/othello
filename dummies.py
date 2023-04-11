@@ -174,8 +174,8 @@ if __name__=='__main__':
     game = OthelloBoard(rows, cols, 1, 1)
 
 
-    p1 = 'dummies/SmartRandom'
-    p2 = 'dummies/SmartRandom'
+    p1 = 'arena/ted'
+    p2 = 'arena/clayton'
 
    
     winner, reason, moves = game.play(p1, p2)
